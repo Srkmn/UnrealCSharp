@@ -50,7 +50,7 @@ bool FSourceCodeGeneratorModule::ShouldExportClassesForModule(const FString& Mod
 void FSourceCodeGeneratorModule::Initialize(const FString& RootLocalPath, const FString& RootBuildPath,
                                             const FString& OutputDirectory, const FString& IncludeBase)
 {
-	OutputDir = FPaths::Combine(OutputDirectory, TEXT("UHT/"));
+	OutputPath = OutputDirectory;
 
 	const auto ProjectPath = FPaths::ConvertRelativePathToFull(FPaths::GetPath(FPaths::GetProjectFilePath()));
 
@@ -166,9 +166,9 @@ void FSourceCodeGeneratorModule::ExportClass(UClass* Class, const FString& Sourc
 
 		StringBuilder.Append(TEXT("PRAGMA_ENABLE_DEPRECATION_WARNINGS\r\n"));
 
-		const auto FilePath = FPaths::Combine(OutputDir, *Class->GetName() + BindingSuffix);
+		const auto FilePath = FPaths::Combine(OutputPath, *Class->GetName() + BindingSuffix);
 
-		SaveIfChanged(*FilePath, StringBuilder.ToString());
+		SaveIfChanged(FilePath, StringBuilder.ToString());
 
 		ExportClasses.Add(Class);
 	}
@@ -178,14 +178,9 @@ void FSourceCodeGeneratorModule::FinishExport()
 {
 	TMap<UPackage*, TArray<FString>> Packages;
 
-	for (auto ExportClass : ExportClasses)
+	for (const auto ExportClass : ExportClasses)
 	{
-		if (!Packages.Contains(ExportClass->GetPackage()))
-		{
-			Packages[ExportClass->GetPackage()] = {};
-		}
-
-		Packages[ExportClass->GetPackage()].Add(*ExportClass->GetName());
+		Packages.FindOrAdd(ExportClass->GetPackage()).Add(*ExportClass->GetName());
 	}
 
 	for (auto Package : Packages)
@@ -201,7 +196,8 @@ void FSourceCodeGeneratorModule::FinishExport()
 			StringBuilder.Append(GenerateInclude(*Value + BindingSuffix));
 		}
 
-		const auto FilePath = FPaths::Combine(OutputDir, *Package.Key->GetName() + HeaderSuffix);
+		const auto FilePath = FPaths::Combine(
+			OutputPath, *FPaths::GetCleanFilename(Package.Key->GetName()) + HeaderSuffix);
 
 		SaveIfChanged(FilePath, StringBuilder.ToString());
 	}
@@ -220,7 +216,7 @@ bool FSourceCodeGeneratorModule::CanExportClass(const UClass* Class)
 
 bool FSourceCodeGeneratorModule::CanExportFunction(const UFunction* Function)
 {
-	if (auto OwnerClass = Function->GetOwnerClass())
+	if (const auto OwnerClass = Function->GetOwnerClass())
 	{
 		if (!OwnerClass->HasAnyClassFlags(CLASS_RequiredAPI) &&
 			!Function->HasAnyFunctionFlags(FUNC_RequiredAPI))
@@ -794,9 +790,8 @@ void FSourceCodeGeneratorModule::GetPropertySignature(const FProperty* Property,
 	else if (const auto InterfaceProperty = CastField<FInterfaceProperty>(Property))
 	{
 		String.Appendf(TEXT(
-			"TScriptInterface<%s%s>"
+			"TScriptInterface<I%s>"
 		),
-		               InterfaceProperty->InterfaceClass->GetPrefixCPP(),
 		               *InterfaceProperty->InterfaceClass->GetName()
 		);
 	}
@@ -860,9 +855,9 @@ void FSourceCodeGeneratorModule::SaveIfChanged(const FString& FileName, const FS
 		{
 			return;
 		}
-
-		FFileHelper::SaveStringToFile(String, *FileName, FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM);
 	}
+
+	FFileHelper::SaveStringToFile(String, *FileName, FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM);
 }
 
 FString FSourceCodeGeneratorModule::GetHeaderFile(UClass* Class)
