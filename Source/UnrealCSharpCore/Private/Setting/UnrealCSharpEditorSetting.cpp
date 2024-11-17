@@ -9,10 +9,11 @@
 #include "Engine/Blueprint.h"
 #include "WidgetBlueprint.h"
 #include "Engine/UserDefinedEnum.h"
-#include "Engine/UserDefinedStruct.h"
 #endif
 #if UE_USER_DEFINED_STRUCTURE
 #include "UserDefinedStructure/UserDefinedStructEditorData.h"
+#else
+#include "Engine/UserDefinedStruct.h"
 #endif
 
 #define LOCTEXT_NAMESPACE "FUnrealCSharpEditorSettings"

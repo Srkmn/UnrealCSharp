@@ -4,7 +4,6 @@
 #include "FStructGenerator.h"
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "Engine/UserDefinedEnum.h"
-#include "Engine/UserDefinedStruct.h"
 #include "WidgetBlueprint.h"
 #include "FGeneratorCore.h"
 #include "Common/FUnrealCSharpFunctionLibrary.h"
@@ -13,6 +12,8 @@
 #include "Setting/UnrealCSharpEditorSetting.h"
 #if UE_USER_DEFINED_STRUCTURE
 #include "UserDefinedStructure/UserDefinedStructEditorData.h"
+#else
+#include "Engine/UserDefinedStruct.h"
 #endif
 
 TArray<UUserDefinedEnum*> FAssetGenerator::UserDefinedEnums;
