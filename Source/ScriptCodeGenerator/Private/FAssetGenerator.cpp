@@ -11,6 +11,9 @@
 #include "CoreMacro/NamespaceMacro.h"
 #include "UEVersion.h"
 #include "Setting/UnrealCSharpEditorSetting.h"
+#if UE_USER_DEFINED_STRUCTURE
+#include "UserDefinedStructure/UserDefinedStructEditorData.h"
+#endif
 
 TArray<UUserDefinedEnum*> FAssetGenerator::UserDefinedEnums;
 
