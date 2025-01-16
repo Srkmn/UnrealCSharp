@@ -76,6 +76,28 @@ void FDynamicHierarchy::GetMatchingClasses(const TSharedPtr<FDynamicHierarchyNod
 	}
 }
 
+void FDynamicHierarchy::TryConvertInternalPathToFileSystemPath(const FString& InSelectedInternalPath,
+                                                               FString& OutFileSystemPath)
+{
+	FString SelectedDirectoryPath = InSelectedInternalPath;
+
+	if (SelectedDirectoryPath.Len() >= 2 && SelectedDirectoryPath[0] == TEXT('/'))
+	{
+		const int32 SecondSlashIndex = SelectedDirectoryPath.Find(
+			TEXT("/"), ESearchCase::IgnoreCase, ESearchDir::FromStart, 1);
+
+		SelectedDirectoryPath = SecondSlashIndex != INDEX_NONE
+			                        ? SelectedDirectoryPath.RightChop(SecondSlashIndex)
+			                        : TEXT("");
+	}
+	else
+	{
+		SelectedDirectoryPath.Empty();
+	}
+
+	OutFileSystemPath = FUnrealCSharpFunctionLibrary::GetFullScriptDirectory() + SelectedDirectoryPath;
+}
+
 TArray<FName> FDynamicHierarchy::GetMatchingFolders(const FName& InPath, const bool bRecurse) const
 {
 	const auto& Node = FindNode(InPath);

@@ -28,6 +28,8 @@ public:
 
 	static void GetMatchingClasses(const TSharedPtr<FDynamicHierarchyNode>& InNode, TArray<UClass*>& OutClasses);
 
+	static void TryConvertInternalPathToFileSystemPath(const FString& InSelectedInternalPath, FString& OutFileSystemPath);
+
 	TArray<FName> GetMatchingFolders(const FName& InPath, const bool bRecurse = false) const;
 
 	TArray<UClass*> GetMatchingClasses(const FName& InPath, const bool bRecurse = false) const;
