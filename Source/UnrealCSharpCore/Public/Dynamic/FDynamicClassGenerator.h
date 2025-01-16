@@ -27,7 +27,7 @@ public:
 
 	static bool IsDynamicClass(const UClass* InClass);
 
-	static bool IsDynamicBlueprintGeneratedClass(const UField* InField);
+	static bool UNREALCSHARPCORE_API IsDynamicBlueprintGeneratedClass(const UField* InField);
 
 	static bool IsDynamicBlueprintGeneratedClass(const UBlueprintGeneratedClass* InClass);
 

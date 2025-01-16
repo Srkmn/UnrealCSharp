@@ -9,6 +9,8 @@
 #include "UEVersion.h"
 #include "DynamicDataSource.generated.h"
 
+DECLARE_DELEGATE(FOnNewClassRequested);
+
 USTRUCT()
 struct FDynamicDataFilter
 {
@@ -78,6 +80,10 @@ public:
 	virtual void BuildRootPathVirtualTree() override;
 
 private:
+	void PopulateAddNewContextMenu(UToolMenu* InMenu);
+
+	static void OnNewDynamicClassRequested(const FName& InSelectedPath);
+
 	void OnDynamicClassUpdated();
 
 	void OnEndGenerator();

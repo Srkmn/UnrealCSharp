@@ -8,6 +8,8 @@ public class UnrealCSharpEditor : ModuleRules
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		
+		bEnableUndefinedIdentifierWarnings = false;
+		
 		PublicIncludePaths.AddRange(
 			new string[] {
 				// ... add public include paths required here ...
@@ -53,7 +55,14 @@ public class UnrealCSharpEditor : ModuleRules
 				"ScriptCodeGenerator",
 				"Compiler",
 				"UnrealCSharpCore",
-				"CrossVersion" 
+				"CrossVersion",
+				"GameProjectGeneration",
+				"AppFramework",
+				"ToolWidgets",
+				"ClassViewer", 
+				
+				
+				"UMGEditor",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

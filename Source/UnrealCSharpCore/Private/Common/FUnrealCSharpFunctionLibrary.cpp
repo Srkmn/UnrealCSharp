@@ -756,6 +756,21 @@ FString FUnrealCSharpFunctionLibrary::GetGameProjectPropsPath()
 #endif
 
 #if WITH_EDITOR
+TArray<FString> FUnrealCSharpFunctionLibrary::GetCustomProjectsName()
+{
+	TArray<FString> CustomProjectsName;
+
+	if (const auto UnrealCSharpSetting = GetMutableDefaultSafe<UUnrealCSharpSetting>())
+	{
+		for (const auto& [Name] : UnrealCSharpSetting->GetCustomProjects())
+		{
+			CustomProjectsName.Add(Name);
+		}
+	}
+
+	return CustomProjectsName;
+}
+
 TArray<FString> FUnrealCSharpFunctionLibrary::GetCustomProjectsDirectory()
 {
 	TArray<FString> CustomProjectsDirectory;
@@ -865,6 +880,28 @@ FString FUnrealCSharpFunctionLibrary::GetPluginScriptDirectory()
 }
 
 #if WITH_EDITOR
+FString FUnrealCSharpFunctionLibrary::GetPluginTemplateOverrideFileName(const UClass* InTemplateClass)
+{
+	return GetPluginTemplateOverrideDirectory()
+		/ InTemplateClass->GetName() + CSHARP_SUFFIX;
+}
+
+FString FUnrealCSharpFunctionLibrary::GetPluginTemplateDynamicFileName(const UClass* InTemplateClass)
+{
+	return GetPluginTemplateDynamicDirectory()
+		/ PLUGIN_TEMPLATE_DYNAMIC + InTemplateClass->GetName() + CSHARP_SUFFIX;
+}
+
+FString FUnrealCSharpFunctionLibrary::GetPluginTemplateOverrideDirectory()
+{
+	return GetPluginTemplateDirectory() / PLUGIN_TEMPLATE_OVERRIDE;
+}
+
+FString FUnrealCSharpFunctionLibrary::GetPluginTemplateDynamicDirectory()
+{
+	return GetPluginTemplateDirectory() / PLUGIN_TEMPLATE_DYNAMIC;
+}
+
 FString FUnrealCSharpFunctionLibrary::GetPluginTemplateDirectory()
 {
 	return GetPluginDirectory() / PLUGIN_TEMPLATE_PATH;
